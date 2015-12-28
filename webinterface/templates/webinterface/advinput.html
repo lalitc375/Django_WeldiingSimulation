@@ -1,0 +1,1155 @@
+{% load staticfiles %}
+<head>
+<link rel="stylesheet" type="text/css" href="{% static 'webinterface/bootstrap.min.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'webinterface/bootstrap.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'webinterface/wikilinks_overwrite.css' %}" />
+
+<script src="{% static 'webinterface/jquery-1.11.0.js' %}" type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
+<script src="{% static 'djangular/js/django-angular.min.js' %}"></script>
+<script src="{% static 'djangular/js/django-angular.js' %}"></script>
+
+
+<title>Advance Simulation Input Form</title>
+<script type="text/javascript">
+var my_app = angular.module('myApp', []);
+my_app.config(function($httpProvider) {
+    $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+});
+my_app.config(function($interpolateProvider) {
+    $interpolateProvider.startSymbol('{$');
+    $interpolateProvider.endSymbol('$}');
+});
+my_app.controller('MyFormCtrl', function($scope, $http) {
+$scope.advancingMaterials=[
+    {name:"Aluminum 6061",value:1}
+  ,{name:"Aluminum 7050/7075",value:2}
+  ,{name:"Aluminum 2024",value:3}
+  ,{name:"Mild Steel",value:4}
+  ,{name:"A286 Steel",value:5}
+  ,{name:"Copper ETP",value:6}
+  ,{name:"Cu-0.8Cr-0.1Zr",value:7}
+  ,{name:"Magnesium WE43",value:8}];
+
+  $scope.retreatingMaterials=[
+    {name:"Aluminum 6061",value:1}
+  ,{name:"Aluminum 7050/7075",value:2}
+  ,{name:"Aluminum 2024",value:3}
+  ,{name:"Mild Steel",value:4}
+  ,{name:"A286 Steel",value:5}
+  ,{name:"Copper ETP",value:6}
+  ,{name:"Cu-0.8Cr-0.1Zr",value:7}
+  ,{name:"Magnesium WE43",value:8}];
+
+  $scope.toolMaterials=[
+    {name:"Aluminum 6061",value:1}
+  ,{name:"Aluminum 7050/7075",value:2}
+  ,{name:"Aluminum 2024",value:3}
+  ,{name:"Mild Steel",value:4}
+  ,{name:"A286 Steel",value:5}
+  ,{name:"Copper ETP",value:6}
+  ,{name:"Cu-0.8Cr-0.1Zr",value:7}
+  ,{name:"Magnesium WE43",value:8}];
+  $scope.noXZone=3;
+  $scope.noYZone=3;
+  $scope.noZZone=1;
+  $scope.pinLength=0;
+  $scope.pinDiameterTip=0;
+  $scope.pinDiameterRoot=0;
+  $scope.shoulderDiameter=0;
+  $scope.threadPitch=5;
+  $scope.threadPitch=0;
+  //Advance Variable
+  $scope.maxIteration=5000;
+  $scope.underRelaxationUVelocity=0.6;
+  $scope.underRelaxationVVelocity=0.6;
+  $scope.underRelaxationWVelocity=0.6;
+  $scope.underRelaxationPressure=0.6;
+  $scope.underRelaxationTemp=0.7;
+  $scope.heatCoffWest=100;
+  $scope.heatCoffEast=100;
+  $scope.heatCoffNorth=100;
+  $scope.heatCoffSouth=100;
+  $scope.heatCoffTop=0;
+  $scope.heatCoffBottom=0.1;
+  $scope.tempWest=298;
+  $scope.tempEast=298;
+  $scope.tempNorth=298;
+  $scope.tempSouth=298;
+  $scope.tempBottom=298;
+  $scope.preHeatTemp=298;
+  $scope.ambientTemp=298;
+  $scope.fricCoff=0.4;
+  $scope.slip=3;
+  $scope.convFactMechHeat=0.8;
+  $scope.adjViscousDiss=0.01;
+  $scope.fracEnterWork=0.6;
+
+//Dynamic Variable
+  $scope.noXZone=3;
+  $scope.noYZone=3;
+  $scope.noZZone=1;
+  $scope.noMonLoc=1;
+  $scope.xShow=0;
+  $scope.yShow=0;
+  $scope.zShow=0;
+  $scope.monLocShow=0;
+  $scope.XLoc=[];
+  $scope.XControl=[];
+  $scope.XEpoCon=[];
+  $scope.YLoc=[];
+  $scope.YControl=[];
+  $scope.YEpoCon=[];
+  $scope.ZLoc=[];
+  $scope.ZControl=[];
+  $scope.ZEpoCon=[];
+
+      $scope.XLoc.push({'value':7.0});
+      $scope.XLoc.push({'value':3.0});
+      $scope.XLoc.push({'value':7.0});
+      $scope.XControl.push({'value':15});
+      $scope.XControl.push({'value':120});
+      $scope.XControl.push({'value':15});
+      $scope.XEpoCon.push({'value':-1.2});
+      $scope.XEpoCon.push({'value':1.0});
+      $scope.XEpoCon.push({'value':1.2});
+      $scope.YLoc.push({'value':7.0});
+      $scope.YLoc.push({'value':3.0});
+      $scope.YLoc.push({'value':7.0});
+      $scope.YControl.push({'value':15});
+      $scope.YControl.push({'value':120});
+      $scope.YControl.push({'value':15});
+      $scope.YEpoCon.push({'value':-1.3});
+      $scope.YEpoCon.push({'value':1.0});
+      $scope.YEpoCon.push({'value':1.3});
+      $scope.ZLoc.push({'value':$scope.thicknessWorkpiece});
+      $scope.ZControl.push({'value':15});
+      $scope.ZEpoCon.push({'value':-1.3});
+      $scope.monYLoc=[];
+      $scope.monZLoc=[];
+      $scope.monSide=[];
+      $scope.monSelSide=[];
+  $scope.createXVar=function(){
+    $scope.xShow=1;
+    $scope.XLoc=[];
+    $scope.XControl=[];
+    $scope.XEpoCon=[];
+    if($scope.noXZone==3)
+      {
+      $scope.XLoc.push({'value':7.0});
+      $scope.XLoc.push({'value':3.0});
+      $scope.XLoc.push({'value':7.0});
+
+      $scope.XControl.push({'value':15});
+      $scope.XControl.push({'value':120});
+      $scope.XControl.push({'value':15});
+
+      $scope.XEpoCon.push({'value':-1.2});
+      $scope.XEpoCon.push({'value':1.0});
+      $scope.XEpoCon.push({'value':1.2});
+      }
+    else
+    {
+    for (var i = 0; i < $scope.noXZone; i++) {
+      $scope.XLoc.push({'value':i});
+      $scope.XEpoCon.push({'value':i});
+      $scope.XControl.push({'value':i});
+      };
+    };
+
+  };
+
+
+  $scope.createYVar=function(){
+    $scope.YLoc=[];
+    $scope.YControl=[];
+    $scope.YEpoCon=[];
+    $scope.yShow=1;
+    if($scope.noYZone==3)
+      {
+      $scope.YLoc.push({'value':7.0});
+      $scope.YLoc.push({'value':3.0});
+      $scope.YLoc.push({'value':7.0});
+
+      $scope.YControl.push({'value':15});
+      $scope.YControl.push({'value':120});
+      $scope.YControl.push({'value':15});
+
+      $scope.YEpoCon.push({'value':-1.3});
+      $scope.YEpoCon.push({'value':1.0});
+      $scope.YEpoCon.push({'value':1.3});
+
+      }
+    else
+    {
+    for (var i = 0; i < $scope.noYZone; i++) {
+      $scope.YLoc.push({'value':i});
+      $scope.YEpoCon.push({'value':i});
+      $scope.YControl.push({'value':i});
+      };
+    };
+  };
+
+
+  $scope.createZVar=function(){
+    $scope.zShow=1;
+    $scope.ZLoc=[];
+    $scope.ZControl=[];
+    $scope.ZEpoCon=[];
+    if($scope.noZZone==1)
+      {
+      $scope.ZLoc.push({'value':$scope.thicknessWorkpiece});
+      $scope.ZControl.push({'value':15});
+      $scope.ZEpoCon.push({'value':-1.3});
+
+      }
+    else
+    {
+    for (var i = 0; i < $scope.noZZone; i++) {
+      $scope.ZLoc.push({'value':i});
+      $scope.ZEpoCon.push({'value':i});
+      $scope.ZControl.push({'value':i});
+      };
+      };
+   };
+
+  $scope.createMonLoc=function(){
+    $scope.monYLoc=[];
+    $scope.monZLoc=[];
+    $scope.monSide=[];
+    $scope.monSelSide=[];
+    $scope.monLocShow=1;
+
+    for (var i = 0; i < $scope.noMonLoc; i++) {
+      $scope.monSide.push([{'side':'Retreating Side','value':-1},{'side':'Advancing Side','value':+1}]);
+      $scope.monZLoc.push({'value':i});
+      $scope.monYLoc.push({'value':i});
+      $scope.monSelSide.push({'side':'Retrating Side','value':-1})
+      };
+    };
+    $scope.msg="";
+    $scope.clearall=function()
+    {
+      $scope.advancingMaterial="";
+      $scope.toolRpm="";
+      $scope.pinLength="";
+      $scope.pinDiameterTip="";
+      $scope.pinDiameterRoot="";
+      $scope.noXZone=1;
+      $scope.noYZone=1;
+      $scope.tiltAngle="";
+      $scope.toolRpm="";
+      $scope.threadPitch="";
+      $scope.XLoc=[];
+      $scope.YLoc=[];
+      $scope.ZLoc=[];
+      $scope.XControl=[];
+      $scope.XEpoCon=[];
+      $scope.YControl=[];
+      $scope.YEpoCon=[];
+      $scope.ZControl=[];
+      $scope.ZEpoCon=[];
+      $scope.shoulderDiameter=0;
+      $scope.toolMaterial="";
+      $scope.feedRate="";
+      $scope.axialPressure="";
+      $scope.thicknessWorkpiece="";
+      $scope.yLocTool="";
+      $scope.xLocTool="";
+    };
+$scope.input=function(){
+	if($scope.advancingMaterial.value!="" && $scope.toolMaterial.value!=""&&$scope.threadPitch!=""&&$scope.thicknessWorkpiece!="" && $scope.shoulderDiameter!="" && $scope.pinDiameterRoot!="" && $scope.pinDiameterTip!="" && $scope.pinLength!="" && $scope.feedRate!="" && $scope.toolRpm!="" && $scope.axialPressure!="" && $scope.tiltAngle!="" && $scope.noXZone!="" && $scope.noYZone!="")
+ 		{
+ 			var XLocString="";
+      var XControlString="";
+      var XEpoConString="";
+      for (var i = 0; i < $scope.noXZone; i++) {
+        XLocString+=String($scope.XLoc[i].value)+"@";
+        XControlString+=String($scope.XControl[i].value)+"@";
+        XEpoConString+=String($scope.XEpoCon[i].value)+"@";
+      };
+      var YLocString="";
+      var YControlString="";
+      var YEpoConString="";
+      for (var i = 0; i < $scope.noYZone; i++) {
+        YLocString+=String($scope.YLoc[i].value)+"@";
+        YControlString+=String($scope.YControl[i].value)+"@";
+        YEpoConString+=String($scope.YEpoCon[i].value)+"@";
+      };
+      var ZLocString="";
+      var ZControlString="";
+      var ZEpoConString="";
+      for (var i = 0; i < $scope.noZZone; i++) {
+        ZLocString+=String($scope.ZLoc[i].value)+"@";
+        ZControlString+=String($scope.ZControl[i].value)+"@";
+        ZEpoConString+=String($scope.ZEpoCon[i].value)+"@";
+      };
+      var monYLocString="";
+      var monZLocString="";
+      for (var i = 0; i < $scope.noMonLoc; i++) {
+        monYLocString+=String(Number($scope.xLocTool)+Number($scope.monSelSide[i].value)*Number($scope.monYLoc[i].value))+"@";
+        monZLocString+=String($scope.thicknessWorkpiece-$scope.monZLoc[i].value)+"@";
+      };
+      if($scope.noZZone==1)
+        ZLocString=String($scope.thicknessWorkpiece)+"@";
+ 	var inputData={
+ 		   "advancingMaterial":$scope.advancingMaterial.value,
+           "retreatingMaterial":$scope.retreatingMaterial.value,
+ 		    "toolMaterial":$scope.toolMaterial.value,
+ 			"thicknessWorkpiece":$scope.thicknessWorkpiece,
+ 			"feedRate":$scope.feedRate,
+ 			"shoulderRadius":$scope.shoulderDiameter/2,
+ 			"pinRadiusRoot":$scope.pinDiameterRoot/2,
+ 			"pinRadiusTip":$scope.pinDiameterTip/2,
+ 			"pinLength":$scope.pinLength,
+ 			"toolRpm":$scope.toolRpm,
+ 			"axialPressure":$scope.axialPressure,
+ 			"tiltAngle":$scope.tiltAngle,
+ 			"threadPitch":$scope.threadPitch,
+ 			"xLocTool":$scope.xLocTool,
+ 			"yLocTool":$scope.yLocTool,
+            "noYZone":$scope.noYZone,
+            "noXZone":$scope.noXZone,
+            "noZZone":$scope.noZZone,
+            "XLocString":XLocString,
+            "XControlString":XControlString,
+            "XEpoConString":XEpoConString,
+        "YLocString":YLocString,
+        "YControlString":YControlString,
+        "YEpoConString":YEpoConString,
+        "ZLocString":ZLocString,
+        "ZControlString":ZControlString,
+        "ZEpoConString":ZEpoConString,
+        "noMonLoc":$scope.noMonLoc,
+        "monYLocString":monYLocString,
+        "monZLocString":monZLocString,
+        "maxIteration":$scope.maxIteration,
+        "underRelaxationTemp":$scope.underRelaxationTemp,
+        "underRelaxationPressure":$scope.underRelaxationPressure,
+        "underRelaxationUVelocity":$scope.underRelaxationUVelocity,
+        "underRelaxationWVelocity":$scope.underRelaxationWVelocity,
+        "underRelaxationVVelocity":$scope.underRelaxationVVelocity,
+        "tempBottom":$scope.tempBottom,
+        "tempSouth":$scope.tempSouth,
+        "tempNorth":$scope.tempNorth,
+        "tempEast":$scope.tempEast,
+        "tempWest":$scope.tempWest,
+        "heatCoffBottom":$scope.heatCoffBottom,
+        "heatCoffTop":$scope.heatCoffTop,
+        "heatCoffSouth":$scope.heatCoffSouth,
+        "heatCoffEast":$scope.heatCoffEast,
+        "heatCoffWest":$scope.heatCoffWest,
+        "heatCoffNorth":$scope.heatCoffNorth,
+        "fricCoff":$scope.fricCoff,
+        "slip":$scope.slip,
+        "fracEnterWork":$scope.fracEnterWork,
+        "convFactMechHeat":$scope.convFactMechHeat,
+        "fracEnterWork":$scope.fracEnterWork,
+        "preHeatTemp":$scope.preHeatTemp,
+        "ambientTemp":$scope.ambientTemp,
+        "adjViscousDiss":$scope.adjViscousDiss
+
+ 			};
+
+ 	    $http({
+            method: 'POST',
+            url: '/webinterface/advanceInputData',
+            data: inputData,
+            }).success(function(data,status){
+ 				$scope.response=angular.fromJson(data);
+ 				if($scope.response.status==1)
+ 					{
+ 					$scope.clearall();
+ 					alert("Your Form Is Submitted With Query Id"+$scope.response.id);
+ 					}
+ 				else
+ 				{
+ 				$scope.clearall();
+ 				alert("please try after some time");
+ 				}
+
+
+ 			}).error(function(){
+ 				alert("error");
+ 			});
+
+
+
+
+ 		}
+ 	else
+ 	alert("All Field Are Mandatory");
+
+
+ 	};
+
+
+
+});
+
+
+</script>
+</head>
+
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand">Welding Simulation</a>
+      </div>
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav navbar-right">
+          <li> <a href="/index"> Welcome, {{ username|upper}} </a>
+	    </li>
+            <li ><a href="/updateprofile">Profile</a> </li>
+  <li> <a href='/logout'>Logout</a></li>
+    </ul>
+      </div>
+    </div>
+  </nav>
+   <div class="container" >
+
+    <div class="row">
+      <div class="col-lg-12">
+          <h1 class="page-header">Friction Stir Welding Simulation</h1>
+      </div>
+                <!-- /.col-lg-12 -->
+    </div>
+    <div class="row">
+    <div class="col-lg-4">
+    <img src="{% static 'webinterface/Capture1.jpg' %}">
+    </div>
+    <div ng-app="myApp" ng-controller="MyFormCtrl">
+    <div class=" col-lg-8">
+      <div class="row">
+          <div class="col-lg-12">
+             <h3 class="page-header">Workpiece Material</h3>
+          </div>
+      </div>
+     <form id="loginform" class="form-horizontal" role="form" >
+        <div class="row" >
+
+          <div class="col-lg-4" >
+            <label>Advancing Side Material</label>
+          </div>
+          <div class="form-group">
+            <div class=" col-lg-6">
+              <select required ng-model="advancingMaterial" ng-options="advancingMateria.name for advancingMateria in advancingMaterials" class="form-control " placeholder="advancingMaterial"></select>
+            </div>
+
+          </div>
+        </div>
+        <div class="row" >
+
+          <div class="col-lg-4" >
+            <label>Retreating Side Material</label>
+          </div>
+          <div class="form-group">
+            <div class=" col-lg-6">
+              <select required ng-model="retreatingMaterial" ng-options="retreatingMateria.name for retreatingMateria in advancingMaterials" class="form-control " placeholder="retreatingMaterial"></select>
+            </div>
+
+          </div>
+        </div>
+        <div class="row" >
+
+          <div class="col-lg-4" >
+            <label>Tool Material</label>
+          </div>
+          <div class="form-group">
+            <div class=" col-lg-6">
+
+              <select required ng-model="toolMaterial" ng-options="toolMaterial.name for toolMaterial in toolMaterials" class="form-control " placeholder="toolmaterial"></select>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-4">
+            <label>Thickness of Workpiece (in cm)</label>
+          </div>
+          <div class="form-group">
+            <div class=" col-lg-6">
+          <input required ng-model="thicknessWorkpiece" type="decimal" class="form-control" name="thicknessWorkpiece" placeholder="0">
+
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-12">
+            <h3 class="page-header">Tool Geometry</h3>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4">
+            <label>Shoulder Diameter (in cm)</label>
+          </div>
+          <div class="form-group">
+            <div class=" col-lg-6">
+          <input required ng-model="shoulderDiameter" type="decimal" class="form-control" name="shoulderDiameter" placeholder="0">
+
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4">
+            <label>Pin Diameter at root (in cm)</label>
+          </div>
+          <div class="form-group">
+            <div class=" col-lg-6">
+          <input required ng-model="pinDiameterRoot" type="decimal" class="form-control" name="pinDiameterRoot" placeholder="0">
+          <div ng-if="2*shoulderDiameter+1<2*pinDiameterRoot+1">
+          <span class="glyphicon glyphicon-remove"> </span>
+          <span >Pin Diameter at root should be less than Shoulder Diameter</span>
+          </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4">
+            <label>Pin Diameter at tip (in cm)</label>
+          </div>
+          <div class="form-group">
+            <div class=" col-lg-6">
+          <input required ng-model="pinDiameterTip" type="decimal" class="form-control" name="pinDiameterTip" placeholder="0">
+          <div ng-if="2*pinDiameterTip+1>2*pinDiameterRoot+1">
+          <span class="glyphicon glyphicon-remove"> </span>
+          <span >Pin Diameter at tip  should be less than Pin Diameter at root</span>
+            </div>
+            </div>
+          </div>
+
+        </div>
+          <div class="row">
+          <div class="col-lg-4">
+            <label>Pin Length (in cm)</label>
+          </div>
+          <div class="form-group">
+            <div class=" col-lg-6">
+          <input required ng-model="pinLength" type="decimal" class="form-control" name="pinLength" placeholder="0">
+          <div ng-if="2*pinLength + 1>2*thicknessWorkpiece + 1">
+          <span class="glyphicon glyphicon-remove"> </span >
+          <span > Pin Length Should be less than Thickness of Workpiece </span>
+          </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4">
+            <label>Thread Pitch (in cm)</label>
+          </div>
+          <div class="form-group">
+            <div class=" col-lg-6">
+          <input required ng-model="threadPitch" type="decimal" class="form-control" name="threadPitch" placeholder="0">
+
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-12">
+            <h3 class="page-header">Process Parameters</h3>
+          </div>
+
+        </div>
+
+        <div class="row">
+          <div class="col-lg-4">
+            <label>Feed Rate (in cm/sec)</label>
+          </div>
+          <div class="form-group">
+            <div class=" col-lg-6">
+          <input required ng-model="feedRate" type="decimal" class="form-control" name="feedRate" placeholder="0">
+
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4">
+            <label>Tool Rotational Speed (in Rpm)</label>
+          </div>
+          <div class="form-group">
+            <div class=" col-lg-6">
+          <input required ng-model="toolRpm" type="decimal" class="form-control" name="toolRpm" placeholder="0">
+
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4">
+            <label>Axial Pressure (in MPa)</label>
+          </div>
+          <div class="form-group">
+            <div class=" col-lg-6">
+          <input required ng-model="axialPressure" type="decimal" class="form-control" name="axialPressure" placeholder="0">
+
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4">
+            <label>Tilt Angle (in Degree)</label>
+          </div>
+          <div class="form-group">
+            <div class=" col-lg-6">
+          <input required ng-model="tiltAngle" type="decimal" class="form-control" name="tiltAngle" placeholder="0">
+
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-12">
+            <h3 class="page-header">Thermocouple Locations</h3>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4">
+            <label>Number Of Thermocouples</label>
+          </div>
+          <div class="form-group">
+            <div class=" col-lg-5">
+          <input required ng-model="noMonLoc" type="number" class="form-control" name="noMonLoc" >
+
+           <div ng-if="noMonLoc<1" >
+          <span class="glyphicon glyphicon-remove"> </span>
+           <span >  Number Of Thermocouple cannot be zero or negative </span>
+            </div>
+          </div>
+        </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-6"></div>
+
+          <div class="col-lg-4">
+            <button ng-click="createMonLoc()" class="btn btn-info">ThermoCouple Location</button>
+          </div>
+        </div>
+        <div ng-show="monLocShow">
+          <div class="row" >
+          <table>
+            <tr>
+              <td></td>
+
+              <td style="height: 50px; padding: 15px;">Distance From Weld Centre Line</td>
+              <td style="height: 50px; padding: 15px;">Distance From Top Surface</td>
+                <td style="height: 50px; padding: 15px;">Side</td>
+            </tr>
+
+                {% verbatim %}
+            <tr ng-repeat="x in monYLoc">
+            <td style="height: 50px; padding: 15px;"><label> Thermocouple {$ $index + 1 $}</label></td>
+
+            <td style="height: 50px; padding: 15px;"> <input required ng-model="monYLoc[$index].value" type="decimal" class="form-control" name="monYLoc[$index].value" placeholder="0"> </td>
+            <td style="height: 50px; padding: 15px;"> <input required ng-model="monZLoc[$index].value" type="decimal" class="form-control" name="monZLoc[$index].value" placeholder="0"></td>
+            <td style="height: 50px; padding: 15px;"><select required ng-model="monSelSide[$index]" ng-options="x.side for x in  monSide[$index]" class="form-control " placeholder="toolmaterial"></select></td>
+
+            </tr>
+            </table>
+          </div>
+        </div>
+          <div class="row">
+          <div class="col-lg-4">
+            <label>Grid</label>
+          </div>
+          <div class="col-lg-4">
+            <input type="checkbox" ng-model="grid">
+          </div>
+        </div>
+      <div ng-show="grid" >
+        <div class="row">
+          <div class="col-lg-12">
+            <h3 class="page-header">Grid</h3>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4">
+            <label>X-Location of Tool</label>
+          </div>
+          <div class="form-group">
+            <div class=" col-lg-6">
+          <input required ng-model="xLocTool" type="decimal" class="form-control" name="xLocTool" placeholder="0">
+
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4">
+            <label>Y-Location of Tool</label>
+          </div>
+          <div class="form-group">
+            <div class=" col-lg-6">
+          <input required ng-model="yLocTool" type="decimal" class="form-control" name="yLocTool" placeholder="0">
+
+            </div>
+          </div>
+          </div>
+        <div class="row">
+          <div class="col-lg-4">
+            <label>Number Of X-zone</label>
+          </div>
+          <div class="form-group">
+            <div class=" col-lg-5">
+          <input required ng-model="noXZone" type="number" class="form-control" name="noXZone" >
+          <div ng-if="noXZone>4" >
+          <span class="glyphicon glyphicon-remove"> </span>
+          <span >  Number Of X-zone should be less than 4 </span>
+           </div>
+           <div ng-if="noXZone<1" >
+          <span class="glyphicon glyphicon-remove"> </span>
+           <span >  Number Of X-zone cannot be zero or negative </span>
+            </div>
+          </div>
+        </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-6"></div>
+
+          <div class="col-lg-4">
+            <button ng-click="createXVar()" class="btn btn-info">X Zones</button>
+          </div>
+        </div>
+
+      <div ng-show="xShow">
+         <div class="row" >
+            <table>
+            <tr>
+            <td></td>
+            <td style="height: 50px; padding: 15px;">Length (in cm)</td>
+            <td style="height: 50px; padding: 15px;">Number of Control Volumes </td>
+            <td style="height: 50px; padding: 15px;">Exponent of Control Volume</td>
+            </tr>
+            <tr ng-repeat="x in XLoc">
+              <td style="height: 50px; padding: 15px;">Zone {$ $index+1 $}</td>
+              <td style="height: 50px; padding: 15px;"><input required ng-model="XLoc[$index].value" type="decimal" class="form-control" name="XLoc[$index].value" placeholder="0"></td>
+              <td style="height: 50px; padding: 15px;"><input required ng-model="XControl[$index].value" type="number" class="form-control" name="XControl[$index].value" placeholder="0"></td>
+              <td style="height: 50px; padding: 15px;"><input required ng-model="XEpoCon[$index].value" type="decimal" class="form-control" name="XEpoCon[$index].value" placeholder="0"></td>
+            </tr>
+            </table>
+        </div>
+      </div>
+        <br>
+        <div class="row">
+          <div class="col-lg-4">
+            <label>Number Of Y-zones</label>
+          </div>
+          <div class="form-group">
+            <div class=" col-lg-5">
+          <input required ng-model="noYZone" type="number" class="form-control" name="noYZone" >
+          <div ng-if="noYZone>4" >
+          <span class="glyphicon glyphicon-remove"> </span>
+          <span >  Number Of Y-zones should be less than 4 </span>
+           </div>
+           <div ng-if="noYZone<1" >
+          <span class="glyphicon glyphicon-remove"> </span>
+           <span >  Number Of Y-zones cannot be zero or negative </span>
+            </div>
+          </div>
+        </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-6"></div>
+
+          <div class="col-lg-4">
+            <button ng-click="createYVar()" class="btn btn-info">Y Zones</button>
+          </div>
+        </div>
+
+        <div ng-show="yShow">
+          <div class="row" >
+            <table>
+            <tr>
+            <td></td>
+            <td style="height: 50px; padding: 15px;">Length (in cm)</td>
+            <td style="height: 50px; padding: 15px;">Number of Control Volumes </td>
+            <td style="height: 50px; padding: 15px;">Exponent of Control Volume</td>
+            </tr>
+            <tr ng-repeat="x in YLoc">
+              <td style="height: 50px; padding: 15px;">Zone {$ $index+1 $}</td>
+              <td style="height: 50px; padding: 15px;"><input required ng-model="YLoc[$index].value" type="decimal" class="form-control" name="YLoc[$index].value" placeholder="0"></td>
+              <td style="height: 50px; padding: 15px;"><input required ng-model="YControl[$index].value" type="number" class="form-control" name="YControl[$index].value" placeholder="0"></td>
+              <td style="height: 50px; padding: 15px;"><input required ng-model="YEpoCon[$index].value" type="decimal" class="form-control" name="YEpoCon[$index].value" placeholder="0"></td>
+            </tr>
+            </table>
+          </div>
+        </div>
+      <br>
+      <div class="row">
+          <div class="col-lg-4">
+            <label>Number Of Z-zones</label>
+          </div>
+          <div class="form-group">
+            <div class=" col-lg-5">
+          <input required ng-model="noZZone" type="number" class="form-control" name="noZZone" >
+          <div ng-if="noZZone>4" >
+          <span class="glyphicon glyphicon-remove"> </span>
+          <span >  Number Of Z-zones should be less than 4 </span>
+           </div>
+           <div ng-if="noZZone<1" >
+          <span class="glyphicon glyphicon-remove"> </span>
+           <span >  Number Of Z-zones cannot be zero or negative </span>
+            </div>
+          </div>
+        </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-6"></div>
+
+          <div class="col-lg-4">
+            <button ng-click="createZVar()" class="btn btn-info">Z Zones</button>
+          </div>
+
+        </div>
+
+      <div ng-show="zShow">
+          <div class="row" >
+            <table>
+            <tr>
+            <td style="height: 50px; padding: 15px;"></td>
+            <td style="height: 50px; padding: 15px;">Length (in cm)</td>
+            <td style="height: 50px; padding: 15px;">Number of Control Volume </td>
+            <td style="height: 50px; padding: 15px;">Exponent of Control Volume</td>
+            </tr>
+            <tr ng-repeat="x in ZLoc">
+              <td style="height: 50px; padding: 15px;">Zone {$ $index+1 $}</td>
+              <td style="height: 50px; padding: 15px;"><input required ng-model="ZLoc[$index].value" type="decimal" class="form-control" name="ZLoc[$index].value" placeholder="0"></td>
+              <td style="height: 50px; padding: 15px;"><input required ng-model="ZControl[$index].value" type="number" class="form-control" name="ZControl[$index].value" placeholder="0"></td>
+              <td style="height: 50px; padding: 15px;"><input required ng-model="ZEpoCon[$index].value" type="decimal" class="form-control" name="ZEpoCon[$index].value" placeholder="0"></td>
+            </tr>
+            </table>
+          </div>
+        </div>
+
+      </div>
+         {% endverbatim %}
+        <div class="row">
+          <div class="col-lg-4">
+            <label>Boundary Conditions</label>
+          </div>
+          <div class="col-lg-4">
+            <input type="checkbox" ng-model="boundCondition">
+          </div>
+        </div>
+      <div ng-show="boundCondition">
+        <div class="row">
+          <h3 class="page-header">Boundary Conditions</h3>
+        </div>
+        <div class="row">
+            <div class="col-lg-4">
+              <label>Heat transfer coefficient at west face (cal/cm2-s-K)</label>
+            </div>
+            <div class="form-group">
+              <div class=" col-lg-6">
+                <input  ng-model="heatCoffWest" type="decimal" class="form-control" name="heatCoffWest" placeholder="0">
+
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4">
+              <label>Heat transfer coefficient at east face (cal/cm2-s-K)</label>
+            </div>
+            <div class="form-group">
+              <div class=" col-lg-6">
+                <input  ng-model="heatCoffEast" type="decimal" class="form-control" name="heatCoffEast" placeholder="0">
+
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4">
+              <label>Heat transfer coefficient at north face (cal/cm2-s-K)</label>
+            </div>
+            <div class="form-group">
+              <div class=" col-lg-6">
+                <input  ng-model="heatCoffNorth" type="decimal" class="form-control" name="heatCoffNorth" placeholder="0">
+
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4">
+              <label>Heat transfer coefficient at south face (cal/cm2-s-K)</label>
+            </div>
+            <div class="form-group">
+              <div class=" col-lg-6">
+                <input  ng-model="heatCoffSouth" type="decimal" class="form-control" name="heatCoffSouth" placeholder="0">
+
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4">
+              <label>Heat transfer coefficient at top Surface (cal/cm2-s-K)</label>
+            </div>
+            <div class="form-group">
+              <div class=" col-lg-6">
+                <input  ng-model="heatCoffTop" type="decimal" class="form-control" name="heatCoffTop" placeholder="0">
+
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4">
+              <label>Heat transfer coefficient at bottom Surface  (cal/cm2-s-K)</label>
+            </div>
+            <div class="form-group">
+              <div class=" col-lg-6">
+                <input  ng-model="heatCoffBottom" type="decimal" class="form-control" name="heatCoffBottom" placeholder="0">
+
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4">
+              <label>Temperature at west face (K)</label>
+            </div>
+            <div class="form-group">
+              <div class=" col-lg-6">
+                <input  ng-model="tempWest" type="decimal" class="form-control" name="tempWest" placeholder="0">
+
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4">
+              <label>Temperature at east face (K)</label>
+            </div>
+            <div class="form-group">
+              <div class=" col-lg-6">
+                <input  ng-model="tempEast" type="decimal" class="form-control" name="tempEast" placeholder="0">
+
+              </div>
+           </div>
+          </div>
+
+          <div class="row">
+            <div class="col-lg-4">
+              <label>Temperature at north face (K)</label>
+            </div>
+            <div class="form-group">
+              <div class=" col-lg-6">
+                <input  ng-model="tempNorth" type="decimal" class="form-control" name="tempNorth" placeholder="0">
+
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4">
+              <label>Temperature at South face (K)</label>
+            </div>
+            <div class="form-group">
+              <div class=" col-lg-6">
+                <input  ng-model="tempSouth" type="decimal" class="form-control" name="tempSouth" placeholder="0">
+
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4">
+              <label>Temperature at bottom Surface (K)</label>
+            </div>
+            <div class="form-group">
+              <div class=" col-lg-6">
+                <input  ng-model="tempBottom" type="decimal" class="form-control" name="tempBottom" placeholder="0">
+
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4">
+              <label>Preheat Temperature (K)</label>
+            </div>
+            <div class="form-group">
+              <div class=" col-lg-6">
+                <input  ng-model="preHeatTemp" type="decimal" class="form-control" name="preHeatTemp" placeholder="0">
+
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4">
+              <label>Ambient Temperature (K)</label>
+            </div>
+            <div class="form-group">
+              <div class=" col-lg-6">
+                <input  ng-model="ambientTemp" type="decimal" class="form-control" name="ambientTemp" placeholder="0">
+
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4">
+              <label>Adjustable Parameter for friction coefficient</label>
+            </div>
+            <div class="form-group">
+              <div class=" col-lg-6">
+                <input  ng-model="fricCoff" type="decimal" class="form-control" name="fricCoff" placeholder="0">
+
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4">
+              <label>Adjustable Parameter for Slip Coefficient </label>
+            </div>
+            <div class="form-group">
+              <div class=" col-lg-6">
+                <input  ng-model="slip" type="decimal" class="form-control" name="slip" placeholder="0">
+
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4">
+              <label>Mechanical Efficiency (Mechanical Energy to Heat Energy) </label>
+            </div>
+            <div class="form-group">
+              <div class=" col-lg-6">
+                <input  ng-model="convFactMechHeat" type="decimal" class="form-control" name="convFactMechHeat" placeholder="0">
+
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4">
+              <label>Adjustable Parameter for viscous dissipation</label>
+            </div>
+            <div class="form-group">
+              <div class=" col-lg-6">
+                <input  ng-model="adjViscousDiss" type="decimal" class="form-control" name="adjViscousDiss" placeholder="0">
+
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4">
+              <label>Fraction of heat energy entering the work-piece</label>
+            </div>
+            <div class="form-group">
+              <div class=" col-lg-6">
+                <input required ng-model="fracEnterWork" type="decimal" class="form-control" name="fracEnterWork" placeholder="0">
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+        <div class="row">
+          <div class="col-lg-4">
+            <label>Numerical scheme parameters</label>
+          </div>
+          <div class="col-lg-4">
+            <input type="checkbox" ng-model="numSchemeParameter">
+          </div>
+        </div>
+
+
+        <div ng-show="numSchemeParameter">
+          <div class="row">
+            <div class="col-lg-12">
+              <h3 class="page-header">Numerical Scheme Parameters</h3>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4">
+              <label>Maximum number of iteration</label>
+            </div>
+          <div class="form-group">
+            <div class=" col-lg-6">
+              <input  ng-model="maxIteration" type="number" class="form-control" name="maxIteration" placeholder="0">
+
+            </div>
+          </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4">
+              <label>Underrelaxation for u-velocity</label>
+            </div>
+            <div class="form-group">
+              <div class=" col-lg-6">
+                <input  ng-model="underRelaxationUVelocity" type="decimal" class="form-control" name="underRelaxationUVelocity" placeholder="0">
+
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4">
+              <label>Underrelaxation for v-velocity</label>
+            </div>
+            <div class="form-group">
+              <div class=" col-lg-6">
+                <input  ng-model="underRelaxationVVelocity" type="decimal" class="form-control" name="underRelaxationVVelocity" placeholder="0">
+
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4">
+              <label>Underrelaxation for w-velocity</label>
+            </div>
+            <div class="form-group">
+              <div class=" col-lg-6">
+                <input  ng-model="underRelaxationWVelocity" type="decimal" class="form-control" name="underRelaxationWVelocity" placeholder="0">
+
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4">
+              <label>Underrelaxation for pressure</label>
+            </div>
+            <div class="form-group">
+              <div class=" col-lg-6">
+                <input  ng-model="underRelaxationPressure" type="decimal" class="form-control" name="underRelaxationPressure" placeholder="0">
+
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4">
+              <label>Underrelaxation for temperature</label>
+            </div>
+            <div class="form-group">
+              <div class=" col-lg-6">
+                <input  ng-model="underRelaxationTemp" type="decimal" class="form-control" name="underRelaxationTemp" placeholder="0">
+
+              </div>
+            </div>
+          </div>
+
+
+
+        </div>
+
+          <div class="row">
+          <div class="form-group">
+              <!-- Button -->
+              <div class="col-md-offset-3 col-md-9">
+
+                  <button id="btn-signup" ng-disabled="2*pinLength+1>2*thicknessWorkpiece+1||2*pinDiameterTip+1>2*pinDiameterRoot+1||2*shoulderDiameter+1<2*pinDiameterRoot+1"  class="btn btn-info" ng-click="input()"><i class="icon-hand-right"></i>Submit for Processing</button>
+
+              </div>
+          </div>
+        </div>
+
+        </form>
+    </div>
+   </div>
+</div>
+    </div>
+
+
+
+
+
+

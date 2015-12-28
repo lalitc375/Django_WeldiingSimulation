@@ -1,0 +1,453 @@
+{% load staticfiles %}
+<head>
+    <title>Simulation Input Form</title>
+
+<link rel="stylesheet" type="text/css" href="{% static 'webinterface/bootstrap.min.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'webinterface/bootstrap.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'webinterface/wikilinks_overwrite.css' %}" />
+
+<script src="{% static 'webinterface/jquery-1.11.0.js' %}" type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
+<script src="{% static 'djangular/js/django-angular.min.js' %}"></script>
+<script src="{% static 'djangular/js/django-angular.js' %}"></script>
+
+
+
+<script type="text/javascript">
+var my_app = angular.module('myApp', []);
+my_app.config(function($httpProvider) {
+    $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+});
+my_app.config(function($interpolateProvider) {
+    $interpolateProvider.startSymbol('{$');
+    $interpolateProvider.endSymbol('$}');
+});
+my_app.controller('MyFormCtrl', function($scope, $http) {
+	$scope.submit = function() {
+		console.log("submit");
+	};
+    $scope.advancingMaterials=[
+    {name:"Aluminum 6061",value:1}
+  ,{name:"Aluminum 7050/7075",value:2}
+  ,{name:"Aluminum 2024",value:3}
+  ,{name:"Mild Steel",value:4}
+  ,{name:"A286 Steel",value:5}
+  ,{name:"Copper ETP",value:6}
+  ,{name:"Cu-0.8Cr-0.1Zr",value:7}
+  ,{name:"Magnesium WE43",value:8}];
+
+  $scope.retreatingMaterials=[
+    {name:"Aluminum 6061",value:1}
+  ,{name:"Aluminum 7050/7075",value:2}
+  ,{name:"Aluminum 2024",value:3}
+  ,{name:"Mild Steel",value:4}
+  ,{name:"A286 Steel",value:5}
+  ,{name:"Copper ETP",value:6}
+  ,{name:"Cu-0.8Cr-0.1Zr",value:7}
+  ,{name:"Magnesium WE43",value:8}];
+
+  $scope.toolMaterials=[
+    {name:"Aluminum 6061",value:1}
+  ,{name:"Aluminum 7050/7075",value:2}
+  ,{name:"Aluminum 2024",value:3}
+  ,{name:"Mild Steel",value:4}
+  ,{name:"A286 Steel",value:5}
+  ,{name:"Copper ETP",value:6}
+  ,{name:"Cu-0.8Cr-0.1Zr",value:7}
+  ,{name:"Magnesium WE43",value:8}];
+  $scope.name='lalit';
+
+  $scope.noMonLoc=1;
+  $scope.monLocShow=0;
+  $scope.monYLoc=[];
+  $scope.monZLoc=[];
+  $scope.monSide=[];
+  $scope.monSelSide=[];
+
+  $scope.createMonLoc=function(){
+    $scope.monYLoc=[];
+    $scope.monZLoc=[];
+    $scope.monSide=[];
+    $scope.monSelSide=[];
+    $scope.monLocShow=1;
+
+    for (var i = 0; i < $scope.noMonLoc; i++) {
+      $scope.monSide.push([{'side':'Retreating Side','value':-1},{'side':'Advancing Side','value':+1}]);
+      $scope.monZLoc.push({'value':i});
+      $scope.monYLoc.push({'value':i});
+      $scope.monSelSide.push({'side':'Retreating Side','value':-1})
+      };
+    };
+    $scope.clearall=function()
+    {
+      $scope.advancingMaterial="";
+      $scope.toolRpm="";
+      $scope.pinLength="";
+      $scope.pinDiameterTip="";
+      $scope.pinDiameterRoot="";
+      $scope.noXZone=1;
+      $scope.noYZone=1;
+      $scope.tiltAngle="";
+      $scope.toolRpm="";
+      $scope.threadPitch="";
+      $scope.XLoc=[];
+      $scope.YLoc=[];
+      $scope.ZLoc=[];
+      $scope.XControl=[];
+      $scope.XEpoCon=[];
+      $scope.YControl=[];
+      $scope.YEpoCon=[];
+      $scope.ZControl=[];
+      $scope.ZEpoCon=[];
+      $scope.shoulderDiameter=1.6;
+      $scope.toolMaterial="";
+      $scope.feedRate=600;
+      $scope.axialPressure=20;
+      $scope.thicknessWorkpiece=0.3;
+
+    };
+
+$scope.input=function(){
+	if($scope.advancingMaterial.value!="" && $scope.toolMaterial.value!=""&&$scope.threadPitch!=""&&$scope.thicknessWorkpiece!="" && $scope.shoulderDiameter!="" && $scope.pinDiameterRoot!="" && $scope.pinDiameterTip!="" && $scope.pinLength!="" && $scope.feedRate!="" && $scope.toolRpm!="" && $scope.axialPressure!="" && $scope.tiltAngle!="" && $scope.noXZone!="" && $scope.noYZone!="")
+ 		{
+
+      var monYLocString="";
+      var monZLocString="";
+      for (var i = 0; i < $scope.noMonLoc; i++) {
+        monYLocString+=String(Number($scope.xLocTool)+Number($scope.monSelSide[i].value)*Number($scope.monYLoc[i].value))+"@";
+        monZLocString+=String($scope.thicknessWorkpiece-$scope.monZLoc[i].value)+"@";
+      };
+ 			$scope.strthicknessWorkpiece=String($scope.thicknessWorkpiece)+"@";
+
+
+ 			var inputData={
+ 				"advancingMaterial":$scope.advancingMaterial.value,
+ 				"toolMaterial":$scope.toolMaterial.value,
+ 				"thicknessWorkpiece":$scope.strthicknessWorkpiece,
+ 				"feedRate":$scope.feedRate,
+ 				"shoulderRadius":$scope.shoulderDiameter/2,
+ 				"pinRadiusRoot":$scope.pinDiameterRoot/2,
+ 				"pinRadiusTip":$scope.pinDiameterTip/2,
+ 				"pinLength":$scope.pinLength,
+ 				"toolRpm":$scope.toolRpm,
+ 				"axialPressure":$scope.axialPressure,
+ 				"tiltAngle":$scope.tiltAngle,
+ 				"threadPitch":$scope.threadPitch,
+                "noMonLoc":$scope.noMonLoc,
+                "monYLocString":monYLocString,
+                "monZLocString":monZLocString
+
+ 			};
+            $http({
+            method: 'POST',
+            url: '/webinterface/basicInputData',
+            data: inputData,
+            }).success(function(data,status){
+ 				$scope.response=angular.fromJson(data);
+ 				if($scope.response.status==1)
+ 					{
+                    $scope.clearall();
+                    alert("Your Form Is Submitted With Query Id"+$scope.response.id);
+
+ 					}
+ 				else
+ 				{
+
+ 				alert("please try after some time");
+ 				}
+
+
+ 			}).error(function(){
+ 				alert("error");
+ 			});
+ 		}
+ 	else
+ 	$scope.msg="All Field Are Mandatory";
+
+
+ 	};
+
+
+
+});
+
+
+</script>
+</head>
+
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand">Welding Simulation</a>
+      </div>
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav navbar-right">
+          <li> <a href="/index"> Welcome, {{ username|upper}} </a>
+	    </li>
+        <li ><a href="/updateprofile">Profile</a> </li>
+  <li> <a href='/logout'>Logout</a></li>
+
+    </ul>
+      </div>
+    </div>
+  </nav>
+   <div class="container" >
+
+    <div class="row">
+      <div class="col-lg-12">
+          <h1 class="page-header">Friction Stir Welding Simulation</h1>
+      </div>
+                <!-- /.col-lg-12 -->
+    </div>
+    <div class="row">
+    <div class="col-lg-4">
+    <img src="{% static 'webinterface/Capture1.jpg' %}">
+    </div>
+    <div ng-app="myApp" ng-controller="MyFormCtrl">
+    <div class=" col-lg-8">
+      <div class="row">
+          <div class="col-lg-12">
+             <h3 class="page-header">Workpiece Material</h3>
+          </div>
+      </div>
+     <form id="loginform" class="form-horizontal" role="form" >
+        <div class="row" >
+
+          <div class="col-lg-4" >
+            <label>Workpiece Material </label>
+          </div>
+          <div class="form-group">
+            <div class=" col-lg-6">
+              <select required ng-model="advancingMaterial" ng-options="advancingMateria.name for advancingMateria in advancingMaterials" class="form-control " placeholder="advancingMaterial"></select>
+            </div>
+
+          </div>
+        </div>
+        <div class="row" >
+
+          <div class="col-lg-4" >
+            <label>Tool Material </label>
+          </div>
+          <div class="form-group">
+            <div class=" col-lg-6">
+
+              <select required ng-model="toolMaterial" ng-options="toolMaterial.name for toolMaterial in toolMaterials" class="form-control " placeholder="toolmaterial"></select>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-4">
+            <label>Thickness of Workpiece (in cm)</label>
+          </div>
+          <div class="form-group">
+            <div class=" col-lg-6">
+          <input required ng-model="thicknessWorkpiece" type="decimal" class="form-control" name="thicknessWorkpiece" placeholder="0">
+
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-12">
+            <h3 class="page-header">Tool Geometry</h3>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4">
+            <label>Shoulder Diameter (in cm)</label>
+          </div>
+          <div class="form-group">
+            <div class=" col-lg-6">
+          <input required ng-model="shoulderDiameter" type="decimal" class="form-control" name="shoulderDiameter" placeholder="0">
+
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4">
+            <label>Pin Diameter at root (in cm)</label>
+          </div>
+          <div class="form-group">
+            <div class=" col-lg-6">
+          <input required ng-model="pinDiameterRoot" type="decimal" class="form-control" name="pinDiameterRoot" placeholder="0">
+          <div ng-if="2*shoulderDiameter+1<2*pinDiameterRoot+1">
+          <span class="glyphicon glyphicon-remove"> </span>
+          <span >Pin Diameter at root should be less than Shoulder Diameter</span>
+          </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4">
+            <label>Pin Diameter at tip (in cm)</label>
+          </div>
+          <div class="form-group">
+            <div class=" col-lg-6">
+          <input required ng-model="pinDiameterTip" type="decimal" class="form-control" name="pinDiameterTip" placeholder="0">
+          <div ng-if="2*pinDiameterTip+1>2*pinDiameterRoot+1">
+          <span class="glyphicon glyphicon-remove"> </span>
+          <span >Pin Diameter at tip  should be less than Pin Diameter at root</span>
+            </div>
+            </div>
+          </div>
+
+        </div>
+          <div class="row">
+          <div class="col-lg-4">
+            <label>Pin Length (in cm)</label>
+          </div>
+          <div class="form-group">
+            <div class=" col-lg-6">
+          <input required ng-model="pinLength" type="decimal" class="form-control" name="pinLength" placeholder="0">
+          <div ng-if="2*pinLength + 1>2*thicknessWorkpiece + 1">
+          <span class="glyphicon glyphicon-remove"> </span >
+          <span > Pin Length Should be less than Thickness of Workpiece </span>
+          </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4">
+            <label>Thread Pitch (in cm)</label>
+          </div>
+          <div class="form-group">
+            <div class=" col-lg-6">
+          <input required ng-model="threadPitch" type="decimal" class="form-control" name="threadPitch" placeholder="0">
+
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-12">
+            <h3 class="page-header">Process Parameters</h3>
+          </div>
+
+        </div>
+
+        <div class="row">
+          <div class="col-lg-4">
+            <label>Feed Rate (in cm/sec)</label>
+          </div>
+          <div class="form-group">
+            <div class=" col-lg-6">
+          <input required ng-model="feedRate" type="decimal" class="form-control" name="feedRate" placeholder="0">
+
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4">
+            <label>Tool Rotational Speed (in Rpm)</label>
+          </div>
+          <div class="form-group">
+            <div class=" col-lg-6">
+          <input required ng-model="toolRpm" type="decimal" class="form-control" name="toolRpm" placeholder="0">
+
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4">
+            <label>Axial Pressure (in MPa)</label>
+          </div>
+          <div class="form-group">
+            <div class=" col-lg-6">
+          <input required ng-model="axialPressure" type="decimal" class="form-control" name="axialPressure" placeholder="0">
+
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4">
+            <label>Tilt Angle (in Degree)</label>
+          </div>
+          <div class="form-group">
+            <div class=" col-lg-6">
+          <input required ng-model="tiltAngle" type="decimal" class="form-control" name="tiltAngle" placeholder="0">
+
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-12">
+            <h3 class="page-header">Thermocouple Locations</h3>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4">
+            <label>Number Of Thermocouples</label>
+          </div>
+          <div class="form-group">
+            <div class=" col-lg-5">
+          <input required ng-model="noMonLoc" type="number" class="form-control" name="noMonLoc" >
+
+           <div ng-if="noMonLoc<1" >
+          <span class="glyphicon glyphicon-remove"> </span>
+           <span >  Number Of Thermocouple cannot be zero or negative </span>
+            </div>
+          </div>
+        </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-6"></div>
+
+          <div class="col-lg-4">
+            <button ng-click="createMonLoc()" class="btn btn-info">ThermoCouple Location</button>
+          </div>
+        </div>
+        <div ng-show="monLocShow">
+          <div class="row" >
+          <table>
+            <tr>
+              <td></td>
+
+              <td style="height: 50px; padding: 15px;">Distance From Weld Centre Line</td>
+              <td style="height: 50px; padding: 15px;">Distance From Top Surface</td>
+              <td style="height: 50px; padding: 15px;">Side</td>
+            </tr>
+
+                {% verbatim %}
+            <tr ng-repeat="x in monYLoc">
+            <td style="height: 50px; padding: 15px;"><label> Thermocouple {$ $index + 1 $}</label></td>
+            <td style="height: 50px; padding: 15px;"> <input required ng-model="monYLoc[$index].value" type="decimal" class="form-control" name="monYLoc[$index].value" placeholder="0"> </td>
+            <td style="height: 50px; padding: 15px;"> <input required ng-model="monZLoc[$index].value" type="decimal" class="form-control" name="monZLoc[$index].value" placeholder="0"></td>
+            <td style="height: 50px; padding: 15px;"><select required ng-model="monSelSide[$index]" ng-options="x.side for x in  monSide[$index]" class="form-control " placeholder="toolmaterial"></select></td>
+
+
+            </tr>
+            </table>
+              {% endverbatim %}
+          </div>
+        </div>
+          <div class="row">
+          <div class="form-group">
+              <!-- Button -->
+              <div class="col-md-offset-3 col-md-9">
+
+                  <button id="btn-signup" ng-disabled="2*pinLength+1>2*thicknessWorkpiece+1||2*pinDiameterTip+1>2*pinDiameterRoot+1||2*shoulderDiameter+1<2*pinDiameterRoot+1"  class="btn btn-info" ng-click="input()"><i class="icon-hand-right"></i>Submit for Processing</button>
+
+              </div>
+          </div>
+        </div>
+
+        </form>
+    </div>
+   </div>
+</div>
+    </div>
+
+
+
+
+
+

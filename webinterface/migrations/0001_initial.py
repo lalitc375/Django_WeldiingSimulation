@@ -1,0 +1,90 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
+from django.db import models, migrations
+
+
+class Migration(migrations.Migration):
+
+    dependencies = [
+    ]
+
+    operations = [
+        migrations.CreateModel(
+            name='DbUser',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('email', models.CharField(max_length=20)),
+                ('name', models.CharField(max_length=100)),
+                ('password', models.CharField(max_length=200)),
+                ('permission', models.IntegerField()),
+                ('profession', models.CharField(max_length=50)),
+                ('phone_no', models.CharField(max_length=15)),
+                ('designation', models.CharField(max_length=25)),
+                ('company', models.CharField(max_length=200)),
+                ('type', models.CharField(max_length=15)),
+                ('address', models.CharField(max_length=500)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='inputData',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('recordCreatedOn', models.DateTimeField(verbose_name=b'date published')),
+                ('workpiece_material_advancing_side', models.IntegerField(default=1)),
+                ('tool_material', models.IntegerField(default=1)),
+                ('workpiece_material_retreating_side', models.IntegerField(default=1)),
+                ('shoulder_radius', models.FloatField(default=0.0)),
+                ('pin_radius_root', models.FloatField(default=0.0)),
+                ('pin_radius_tip', models.FloatField(default=0.0)),
+                ('pin_length', models.FloatField(default=0.0)),
+                ('thread_pitch', models.FloatField(default=0.0)),
+                ('axial_pressure', models.FloatField(default=0.0)),
+                ('welding_velocity', models.FloatField(default=0.0)),
+                ('rotational_velocity', models.FloatField(default=0.0)),
+                ('x_location_tool', models.FloatField(default=0.0)),
+                ('y_location_tool', models.FloatField(default=0.0)),
+                ('tilt_angle', models.FloatField(default=0.0)),
+                ('number_xzone', models.IntegerField(default=3)),
+                ('length_xzones', models.CharField(default=b'7.0@3.0@7.0@', max_length=255)),
+                ('no_control_volume_xzone', models.CharField(default=b'15@120@15@', max_length=255)),
+                ('exponent_locate_control_volume_xzone', models.CharField(default=b'-1.2@1.0@1.2@', max_length=255)),
+                ('number_yzone', models.IntegerField(default=3)),
+                ('length_yzones', models.CharField(default=b'7.0@3.0@7.0@', max_length=255)),
+                ('no_control_volume_yzone', models.CharField(default=b'15@120@15@', max_length=255)),
+                ('exponent_locate_control_volume_yzone', models.CharField(default=b'-1.3@1.0@1.3@', max_length=255)),
+                ('number_zzone', models.IntegerField(default=1)),
+                ('length_zzones', models.CharField(default=b'', max_length=255)),
+                ('no_control_volume_zzone', models.CharField(default=b'45@', max_length=255)),
+                ('exponent_locate_control_volume_zzone', models.CharField(default=b'1.0@', max_length=255)),
+                ('no_monitoring_locations', models.IntegerField(default=1)),
+                ('ylocation_monitoring_locations', models.CharField(max_length=255)),
+                ('zlocation_monitoring_locations', models.CharField(max_length=255)),
+                ('max_iterations', models.IntegerField(default=5000)),
+                ('underrelaxation_u_velocity', models.FloatField(default=0.0)),
+                ('underrelaxation_v_velocity', models.FloatField(default=0.6)),
+                ('underrelaxation_w_velocity', models.FloatField(default=0.6)),
+                ('underrelaxation_pressure', models.FloatField(default=0.6)),
+                ('underrelaxation_temperature', models.FloatField(default=0.7)),
+                ('heat_transfer_coff_west_face', models.FloatField(default=100)),
+                ('heat_transfer_coff_east_face', models.FloatField(default=100)),
+                ('heat_transfer_coff_north_face', models.FloatField(default=100)),
+                ('heat_transfer_coff_south_face', models.FloatField(default=100)),
+                ('heat_transfer_coff_top_face', models.FloatField(default=0)),
+                ('heat_transfer_coff_bottom_face', models.FloatField(default=0.1)),
+                ('temp_west_face', models.FloatField(default=298)),
+                ('temp_east_face', models.FloatField(default=298)),
+                ('temp_north_face', models.FloatField(default=298)),
+                ('temp_south_face', models.FloatField(default=298)),
+                ('temp_bottom_face', models.FloatField(default=298)),
+                ('preheat_temp', models.FloatField(default=298)),
+                ('ambient_temp', models.FloatField(default=298)),
+                ('adjustable_parameter_friction_coefficient', models.FloatField(default=0.4)),
+                ('adjustable_parameter_slip', models.FloatField(default=3.0)),
+                ('conv_factor_mech_heat', models.FloatField(default=0.8)),
+                ('adjustable_parameter_viscous_dissipation', models.FloatField(default=0.01)),
+                ('fraction_heatenergy_entering_workpiece', models.FloatField(default=0.6)),
+                ('dbUser', models.ForeignKey(to='webinterface.DbUser')),
+            ],
+        ),
+    ]
